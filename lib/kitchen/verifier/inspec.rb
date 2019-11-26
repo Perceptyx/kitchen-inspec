@@ -289,6 +289,16 @@ module Kitchen
       #
       # @return [Hash] a configuration hash of string-based keys
       # @api private
+      def runner_options_for_sftp(config_data)
+        # sftp is provided by kitchen-sync, and is a subclass of ssh transport
+        # so options are the same
+        self.runner_options_for_ssh(config_data)
+      end
+
+      # Returns a configuration Hash that can be passed to a `Inspec::Runner`.
+      #
+      # @return [Hash] a configuration hash of string-based keys
+      # @api private
       def runner_options_for_winrm(config_data)
         kitchen = instance.transport.send(:connection_options, config_data).dup
         opts = {
