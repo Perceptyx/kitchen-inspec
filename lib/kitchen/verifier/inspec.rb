@@ -292,7 +292,7 @@ module Kitchen
       def runner_options_for_sftp(config_data)
         # sftp is provided by kitchen-sync, and is a subclass of ssh transport
         # so options are the same
-        self.runner_options_for_ssh(config_data)
+        runner_options_for_ssh(config_data)
       end
 
       # Returns a configuration Hash that can be passed to a `Inspec::Runner`.
