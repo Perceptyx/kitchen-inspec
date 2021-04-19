@@ -37,8 +37,15 @@ module Kitchen
       kitchen_verifier_api_version 1
       plugin_version Kitchen::Verifier::INSPEC_VERSION
 
+      # Chef InSpec is based on RSpec, which is not thread safe
+      # (https://github.com/rspec/rspec-core/issues/1254)
+      # Tell test kitchen not to multithread the verify step
+      no_parallel_for :verify
+
       default_config :inspec_tests, []
-      default_config :load_plugins, false
+      default_config :load_plugins, true
+      default_config :plugin_config, {}
+      default_config :backend_cache, true
 
       # A lifecycle method that should be invoked when the object is about
       # ready to be used. A reference to an Instance is required as
@@ -76,25 +83,23 @@ module Kitchen
         # add inputs
         setup_inputs(opts, config)
 
-        # setup logger
+        # setup Inspec
         ::Inspec::Log.init(STDERR)
         ::Inspec::Log.level = Kitchen::Util.from_logger_level(logger.level)
+        load_plugins # Must load plugins prior to config validation
+        inspec_config = ::Inspec::Config.new(opts)
+
+        # handle plugins
+        setup_plugin_config(inspec_config)
 
         # initialize runner
-        runner = ::Inspec::Runner.new(opts)
-
-        # load plugins
-        if config[:load_plugins]
-          v2_loader = ::Inspec::Plugin::V2::Loader.new
-          v2_loader.load_all
-          v2_loader.exit_on_load_error
-        end
+        runner = ::Inspec::Runner.new(inspec_config)
 
         # add each profile to runner
         tests = collect_tests
         profile_ctx = nil
         tests.each do |target|
-          profile_ctx = runner.add_target(target, opts)
+          profile_ctx = runner.add_target(target)
         end
 
         profile_ctx ||= []
@@ -136,6 +141,32 @@ module Kitchen
         end
       end
 
+      def load_plugins
+        return unless config[:load_plugins]
+
+        v2_loader = ::Inspec::Plugin::V2::Loader.new
+        v2_loader.load_all
+        v2_loader.exit_on_load_error
+
+        # Suppress input caching or all suites will get identical inputs, not different ones
+        if ::Inspec::InputRegistry.instance.respond_to?(:cache_inputs=) && config[:cache_inputs]
+          ::Inspec::InputRegistry.instance.cache_inputs = !!config[:cache_inputs]
+        end
+      end
+
+      def setup_plugin_config(inspec_config)
+        return unless config[:load_plugins]
+
+        unless inspec_config.respond_to?(:merge_plugin_config)
+          logger.warn("kitchen-inspec: skipping `plugin_config` which requires InSpec version 4.26.2 or higher. Your version: #{::Inspec::VERSION}")
+          return
+        end
+
+        config[:plugin_config].each do |plugin_name, plugin_config|
+          inspec_config.merge_plugin_config(plugin_name, plugin_config)
+        end
+      end
+
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         require "inspec"
@@ -158,7 +189,7 @@ module Kitchen
       #
       # we support the base directories
       # - test/integration
-      # - test/integration/inspec (prefered if used with other test environments)
+      # - test/integration/inspec (preferred if used with other test environments)
       #
       # we do not filter for specific directories, this is core of inspec
       #
@@ -301,7 +332,7 @@ module Kitchen
       # @api private
       def runner_options_for_winrm(config_data)
         kitchen = instance.transport.send(:connection_options, config_data).dup
-        opts = {
+        {
           "backend" => "winrm",
           "logger" => logger,
           "ssl" => URI(kitchen[:endpoint]).scheme == "https",
@@ -314,7 +345,6 @@ module Kitchen
           "connection_retry_sleep" => kitchen[:connection_retry_sleep],
           "max_wait_until_ready" => kitchen[:max_wait_until_ready],
         }
-        opts
       end
 
       # Returns a configuration Hash that can be passed to a `Inspec::Runner`.
@@ -345,11 +375,10 @@ module Kitchen
       # @return [Hash] a configuration hash of string-based keys
       # @api private
       def runner_options_for_exec(config_data)
-        opts = {
+        {
           "backend" => "local",
           "logger" => logger,
         }
-        opts
       end
 
       # Returns a configuration Hash that can be passed to a `Inspec::Runner`.

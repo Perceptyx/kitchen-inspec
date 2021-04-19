@@ -268,12 +268,37 @@ You can also define your inputs in external files. Adapt your `.kitchen.yml` to 
 
 ### Use inspec plugins
 
-By default, the verifier does not load Inspec plugins such as additional input plugins. You can activate loading the same plugins as on normal Inspec invocations:
+By default, the verifier loads Inspec plugins such as additional Reporter or Input plugins. This adds a small delay as the system scans for plugins. If you know you are not using special Reporters or Inputs, you can disable plugin loading:
 
 ```yaml
     verifier:
-      load_plugins: true
+      load_plugins: false
 ```
+
+Some Inspec plugins allow further configuration. You can supply these settings as well with InSpec 4.26 or newer:
+
+```yaml
+    verifier:
+      plugin_config:
+        example_plugin_name:
+          example_setting: "Example value"
+```
+
+When using Input plugins, please be aware that input values get cached between suites. If you want to re-evaluate these values for every suite, you can deactivate the cache:
+
+```yaml
+    verifier:
+      cache_inputs: false
+```
+
+ ### Chef InSpec Backend Cache
+
+ Chef InSpec uses a cache when executing commands and accessing files on the remote target. The cache is enabled by default. To disable the cache:
+
+ ```yaml
+     verifier:
+       backend_cache: false
+ ```
 
 ## Development
 

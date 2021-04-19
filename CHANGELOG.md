@@ -5,12 +5,44 @@
 <!-- release_rollup -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
+## [v2.4.1](https://github.com/inspec/kitchen-inspec/tree/v2.4.1) (2021-02-24)
+
+#### Merged Pull Requests
+- Load plugins prior to InSpec config validation [#274](https://github.com/inspec/kitchen-inspec/pull/274) ([clintoncwolfe](https://github.com/clintoncwolfe))
+<!-- latest_stable_release -->
+
+## [v2.4.0](https://github.com/inspec/kitchen-inspec/tree/v2.4.0) (2021-02-16)
+
+#### Merged Pull Requests
+- Add option to set Inspec plugin configuration [#270](https://github.com/inspec/kitchen-inspec/pull/270) ([tecracer-theinen](https://github.com/tecracer-theinen))
+
+## [v2.3.0](https://github.com/inspec/kitchen-inspec/tree/v2.3.0) (2021-01-28)
+
+#### Merged Pull Requests
+- Update rake requirement from ~&gt; 12.0 to ~&gt; 13.0 [#263](https://github.com/inspec/kitchen-inspec/pull/263) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- allow for hashie 4.x [#267](https://github.com/inspec/kitchen-inspec/pull/267) ([nikhil2611](https://github.com/nikhil2611))
+- Fix call with deprecated options hash [#257](https://github.com/inspec/kitchen-inspec/pull/257) ([tecracer-theinen](https://github.com/tecracer-theinen))
+- enabling default backend cache [#264](https://github.com/inspec/kitchen-inspec/pull/264) ([i5pranay93](https://github.com/i5pranay93))
+
+## [v2.2.2](https://github.com/inspec/kitchen-inspec/tree/v2.2.2) (2020-12-11)
+
+#### Merged Pull Requests
+- Fix hashi pin to be &lt; 5 [#268](https://github.com/inspec/kitchen-inspec/pull/268) ([tas50](https://github.com/tas50))
+
+## [v2.2.1](https://github.com/inspec/kitchen-inspec/tree/v2.2.1) (2020-09-15)
+
+#### Merged Pull Requests
+- Correct minor spelling mistake [#255](https://github.com/inspec/kitchen-inspec/pull/255) ([tas50](https://github.com/tas50))
+- Resolve RuboCop Style/RedundantAssignment [#256](https://github.com/inspec/kitchen-inspec/pull/256) ([tas50](https://github.com/tas50))
+- Add ability to disable input caching in InSpec [#258](https://github.com/inspec/kitchen-inspec/pull/258) ([tecracer-theinen](https://github.com/tecracer-theinen))
+- Declare kitchen-inspec to be run serially [#259](https://github.com/inspec/kitchen-inspec/pull/259) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- Load plugins earlier; load plugins by default [#261](https://github.com/inspec/kitchen-inspec/pull/261) ([clintoncwolfe](https://github.com/clintoncwolfe))
+
 ## [v2.0.0](https://github.com/inspec/kitchen-inspec/tree/v2.0.0) (2020-06-05)
 
 #### Merged Pull Requests
 - Add setting to load Inspec plugins for additional functionality [#247](https://github.com/inspec/kitchen-inspec/pull/247) ([tecracer-theinen](https://github.com/tecracer-theinen))
 - Require InSpec 2.2.64+ to support plugin v2 [#254](https://github.com/inspec/kitchen-inspec/pull/254) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v1.3.1](https://github.com/inspec/kitchen-inspec/tree/v1.3.1) (2019-10-30)
 
